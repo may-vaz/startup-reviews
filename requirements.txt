@@ -6,4 +6,3 @@ wordcloud
 spacy
 torch
 transformers
-sentencepiece

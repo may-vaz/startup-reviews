@@ -4,17 +4,15 @@ import pandas as pd
 import torch.nn.functional as F
 
 # Load model and tokenizer
-model_name = "LiYuan/amazon-review-sentiment-analysis"
+model_name = "cardiffnlp/twitter-roberta-base-sentiment"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSequenceClassification.from_pretrained(model_name)
 
-# Label mapping
+# Map model output labels to human-friendly form
 label_map = {
-    0: "Very Negative",
-    1: "Negative",
-    2: "Neutral",
-    3: "Positive",
-    4: "Very Positive"
+    "LABEL_0": "Negative",
+    "LABEL_1": "Neutral",
+    "LABEL_2": "Positive"
 }
 
 def analyze_sentiment(reviews):
@@ -25,9 +23,9 @@ def analyze_sentiment(reviews):
             logits = model(**inputs).logits
             probs = F.softmax(logits, dim=1)
             label_id = torch.argmax(probs, dim=1).item()
+            label = label_map[f"LABEL_{label_id}"]
             confidence = probs[0][label_id].item()
 
-        label = label_map[label_id]
         results.append({
             "review": text,
             "sentiment": label,
