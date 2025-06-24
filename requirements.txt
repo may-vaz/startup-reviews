@@ -4,6 +4,5 @@ matplotlib
 wordcloud
 transformers
 torch
-sentencepiece
 spacy
 
