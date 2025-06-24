@@ -4,6 +4,16 @@ import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import streamlit as st
 
+import spacy.cli
+
+def load_nlp():
+    try:
+        return spacy.load("en_core_web_sm")
+    except OSError:
+        spacy.cli.download("en_core_web_sm")
+        return spacy.load("en_core_web_sm")
+
+nlp = load_nlp()
 
 
 def preprocess_reviews(reviews):
