@@ -51,6 +51,7 @@ def display_wordcloud_and_barchart(df):
         st.markdown("Top Keywords")
         st.pyplot(plot_keyword_bar(words))
 
+
 def plot_sentiment_chart(df):
     fig, ax = plt.subplots()
     df['sentiment'].value_counts().plot(kind='bar', ax=ax, color='orchid')

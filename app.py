@@ -12,9 +12,11 @@ st.markdown("---")
 
 option = st.radio("Choose Input Method", ["Paste Reviews", "Upload CSV"])
 
+reviews = None
+
 if option == "Paste Reviews":
     reviews_text = st.text_area("Paste feedback (one per line):", height=200)
-    if st.button("Analyze"):
+    if st.button("Analyze") and reviews_text.strip():
         reviews = [line.strip() for line in reviews_text.split('\n') if line.strip()]
 elif option == "Upload CSV":
     uploaded_file = st.file_uploader("Upload CSV with 'review' column", type=["csv"])
@@ -25,8 +27,7 @@ elif option == "Upload CSV":
         else:
             reviews = df['review'].dropna().tolist()
 
-
-if 'reviews' in locals():
+if reviews:
     st.subheader("📌 Sentiment Analysis")
     sentiment_df = analyze_sentiment(reviews)
     st.dataframe(sentiment_df)

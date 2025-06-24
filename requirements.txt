@@ -7,3 +7,4 @@ spacy
 torch
 transformers
 scipy
+numpy
