@@ -1,35 +1,33 @@
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import pandas as pd
 import torch.nn.functional as F
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from scipy.special import softmax
 
-# Load model and tokenizer
-model_name = "cardiffnlp/twitter-roberta-base-sentiment"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
+# Load model and tokenizer as per official Hugging Face docs
+MODEL = "cardiffnlp/twitter-roberta-base-sentiment"
+tokenizer = AutoTokenizer.from_pretrained(MODEL)
+model = AutoModelForSequenceClassification.from_pretrained(MODEL)
 
-# Map model output labels to human-friendly form
-label_map = {
-    "LABEL_0": "Negative",
-    "LABEL_1": "Neutral",
-    "LABEL_2": "Positive"
-}
+# Labels defined by the model
+labels = ['Negative', 'Neutral', 'Positive']
 
 def analyze_sentiment(reviews):
     results = []
     for text in reviews:
-        inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
+        text = text.strip().replace('\n', ' ')
+        encoded_input = tokenizer(text, return_tensors='pt')
         with torch.no_grad():
-            logits = model(**inputs).logits
-            probs = F.softmax(logits, dim=1)
-            label_id = torch.argmax(probs, dim=1).item()
-            label = label_map[f"LABEL_{label_id}"]
-            confidence = probs[0][label_id].item()
+            output = model(**encoded_input)
+        scores = output.logits[0].numpy()
+        scores = softmax(scores)
+        label_id = scores.argmax()
+        sentiment = labels[label_id]
+        confidence = float(scores[label_id])
 
         results.append({
             "review": text,
-            "sentiment": label,
+            "sentiment": sentiment,
             "confidence": round(confidence, 2)
         })
-
     return pd.DataFrame(results)
