@@ -1,8 +1,9 @@
 streamlit
 pandas
+textblob
 matplotlib
 wordcloud
-transformers
-torch
 spacy
-
+torch
+transformers
+sentencepiece
