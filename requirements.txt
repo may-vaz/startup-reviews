@@ -3,7 +3,6 @@ pandas
 textblob
 matplotlib
 wordcloud
-spacy
 torch
 transformers
 scipy
