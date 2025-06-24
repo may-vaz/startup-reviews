@@ -1,4 +1,5 @@
-ffmpeg
 cmake
 pkg-config
 build-essential
+ffmpeg
+
