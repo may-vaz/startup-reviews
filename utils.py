@@ -1,20 +1,24 @@
-
-import re
+import spacy
 from collections import Counter
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import streamlit as st
 
-# Remove spaCy dependency
+nlp = spacy.load("en_core_web_sm")
+
 def preprocess_reviews(reviews):
-    combined = ' '.join(reviews).lower()
-    # Simple text cleaning
-    words = re.findall(r'\b[a-zA-Z]{3,}\b', combined)
-    
-    # Basic stop words list
-    stop_words = {'the', 'and','not','keeps','love','getting', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them', 'my', 'your', 'his', 'her', 'its', 'our', 'their'}
-    
-    filtered_words = [word for word in words if word not in stop_words]
+    combined = ' '.join(reviews)
+    doc = nlp(combined)
+
+    filtered_words = [
+        token.lemma_.lower()
+        for token in doc
+        if token.pos_ in ["NOUN", "ADJ"]
+        and not token.is_stop
+        and token.is_alpha
+        and len(token.text) > 2
+    ]
+
     return filtered_words
 
 def plot_wordcloud(words):
